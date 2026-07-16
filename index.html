@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Eski Telefon Topshirish - Mini App</title>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Tesseract.js OCR Engine -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     
     <style>
@@ -20,16 +17,9 @@
             --text-color: #c9d1d9;
             --border-color: #30363d;
             --input-bg: #0d1117;
-            --danger-color: #f85149;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
 
         body {
             background-color: var(--bg-color);
@@ -37,7 +27,6 @@
             padding: 16px;
             display: flex;
             justify-content: center;
-            align-items: center;
             min-height: 100vh;
         }
 
@@ -49,56 +38,74 @@
             padding: 24px;
             width: 100%;
             max-width: 480px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            height: fit-content;
         }
 
         h2 {
             text-align: center;
             font-weight: 700;
             margin-bottom: 24px;
-            color: #ffffff;
-            font-size: 22px;
-            letter-spacing: -0.5px;
+            color: #fff;
+            font-size: 20px;
         }
 
-        .form-group {
-            margin-bottom: 20px;
-            position: relative;
-        }
+        .form-group { margin-bottom: 18px; }
 
         label {
             display: block;
-            margin-bottom: 8px;
-            font-size: 13px;
+            margin-bottom: 7px;
+            font-size: 12px;
             font-weight: 600;
             color: #8b949e;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        input[type="text"] {
+        input[type="text"], input[type="tel"] {
             width: 100%;
             background-color: var(--input-bg);
             border: 1px solid var(--border-color);
-            color: #ffffff;
-            padding: 12px 16px;
+            color: #fff;
+            padding: 12px 14px;
             border-radius: 8px;
             font-size: 15px;
-            transition: all 0.3s ease;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        input[type="text"]:focus {
+        input[type="text"]:focus, input[type="tel"]:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(88,166,255,0.15);
         }
 
+        /* Passport 2-column row */
+        .pasport-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .pasport-row .pasport-letters {
+            width: 70px;
+            flex-shrink: 0;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 15px;
+            text-align: center;
+        }
+
+        .pasport-row .pasport-numbers {
+            flex: 1;
+            letter-spacing: 2px;
+        }
+
+        /* IMEI section */
         .imei-section {
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 16px;
-            margin-bottom: 20px;
-            background-color: rgba(255, 255, 255, 0.01);
+            padding: 14px;
+            margin-bottom: 18px;
+            background-color: rgba(255,255,255,0.01);
         }
 
         .imei-section-title {
@@ -116,7 +123,7 @@
         .btn-ocr-main {
             background-color: var(--primary-color);
             border: none;
-            color: #ffffff;
+            color: #fff;
             padding: 6px 12px;
             border-radius: 6px;
             font-size: 11px;
@@ -125,183 +132,148 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            transition: background-color 0.2s;
-        }
-
-        .btn-ocr-main:hover {
-            background-color: #1f6feb;
         }
 
         .btn-ocr-main svg {
-            width: 14px;
-            height: 14px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2;
+            width: 14px; height: 14px;
+            fill: none; stroke: currentColor; stroke-width: 2;
         }
 
+        /* File upload */
         .file-upload {
             border: 2px dashed var(--border-color);
             border-radius: 12px;
-            padding: 20px;
+            padding: 18px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
             position: relative;
-            background-color: rgba(240, 246, 252, 0.02);
+            background-color: rgba(240,246,252,0.02);
         }
 
-        .file-upload:hover {
-            border-color: var(--primary-color);
-            background-color: rgba(88, 166, 255, 0.05);
-        }
+        .file-upload:hover { border-color: var(--primary-color); }
+        .file-upload p { font-size: 13px; color: #8b949e; margin-top: 8px; }
+        .file-upload input[type="file"] { position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer; }
 
-        .file-upload p {
-            font-size: 14px;
-            color: #8b949e;
-            margin-top: 8px;
-        }
-
-        .file-upload input[type="file"] {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .image-preview {
-            margin-top: 12px;
-            max-width: 100%;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            display: none;
-        }
+        .image-preview { margin-top: 10px; max-width: 100%; border-radius: 8px; border: 1px solid var(--border-color); display: none; }
 
         .btn-submit {
             width: 100%;
             background-color: var(--accent-color);
             border: none;
-            color: #ffffff;
+            color: #fff;
             padding: 14px;
             border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
-            margin-top: 10px;
+            margin-top: 8px;
         }
 
-        .btn-submit:hover {
-            background-color: #2c974b;
-        }
+        .btn-submit:disabled { background-color: var(--border-color); color: #8b949e; cursor: not-allowed; }
 
-        .btn-submit:disabled {
-            background-color: var(--border-color);
-            color: #8b949e;
-            cursor: not-allowed;
-        }
-
-        /* Loading / Scanning Overlay */
+        /* Overlay */
         .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(13, 17, 23, 0.9);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(13,17,23,0.9);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
-
-        .overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .overlay.active { opacity: 1; pointer-events: auto; }
 
         .spinner {
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.1);
+            width: 48px; height: 48px; border-radius: 50%;
             border-left-color: var(--primary-color);
             animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
-        .overlay p {
-            font-size: 16px;
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .overlay p { font-size: 15px; font-weight: 500; color: #fff; }
+
+        /* OCR status badge */
+        .ocr-status {
+            font-size: 11px;
+            margin-top: 6px;
+            color: var(--accent-color);
+            min-height: 16px;
             font-weight: 500;
-            color: #ffffff;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
         <h2>Eski telefon topshirish</h2>
-        
+
         <div class="form-group">
             <label for="model">Telefon modeli</label>
-            <input type="text" id="model" placeholder="Masalan: Samsung Galaxy A51">
+            <input type="text" id="model" placeholder="Masalan: Samsung Galaxy A51" inputmode="text">
         </div>
 
-        <!-- IMEI Section with single OCR button -->
+        <!-- IMEI Section: single scan button -->
         <div class="imei-section">
             <div class="imei-section-title">
                 <span>IMEI Kodlari</span>
-                <button class="btn-ocr-main" id="btnOcr" type="button" title="IMEI-larni rasmdan aniqlash">
-                    <svg viewBox="0 0 24 24" stroke="currentColor">
-                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                        <circle cx="12" cy="13" r="4"></circle>
-                    </svg>
+                <button class="btn-ocr-main" id="btnOcr" type="button">
+                    <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                     Skanerlash
                 </button>
             </div>
-            
-            <div class="form-group" style="margin-bottom: 12px;">
-                <label for="imei" style="font-size: 11px; margin-bottom: 4px;">IMEI 1</label>
-                <input type="text" id="imei" maxlength="15" placeholder="1-IMEI (15 ta raqam)">
+
+            <div class="form-group" style="margin-bottom:12px">
+                <label style="font-size:11px;margin-bottom:4px">IMEI 1</label>
+                <input type="tel" id="imei" maxlength="15" placeholder="1-IMEI (15 ta raqam)" inputmode="numeric">
             </div>
-            
-            <div class="form-group" style="margin-bottom: 0;">
-                <label for="imei2" style="font-size: 11px; margin-bottom: 4px;">IMEI 2 (Ixtiyoriy)</label>
-                <input type="text" id="imei2" maxlength="15" placeholder="2-IMEI (15 ta raqam)">
+
+            <div class="form-group" style="margin-bottom:0">
+                <label style="font-size:11px;margin-bottom:4px">IMEI 2 (Ixtiyoriy)</label>
+                <input type="tel" id="imei2" maxlength="15" placeholder="2-IMEI (15 ta raqam)" inputmode="numeric">
             </div>
-            
-            <input type="file" id="imeiFileInput" accept="image/*" style="display: none;">
+
+            <div class="ocr-status" id="ocrStatus"></div>
+            <input type="file" id="imeiFileInput" accept="image/*" style="display:none">
         </div>
 
         <div class="form-group">
             <label for="egasi">Telefon egasi (F.I.SH.)</label>
-            <input type="text" id="egasi" placeholder="Masalan: Sherzod Toshpo'latov">
+            <input type="text" id="egasi" placeholder="Masalan: Sherzod Toshpo'latov" inputmode="text">
         </div>
 
+        <!-- Passport: 2 separate inputs -->
         <div class="form-group">
-            <label for="pasport">Pasport ma'lumotlari (Majburiy)</label>
-            <input type="text" id="pasport" placeholder="Masalan: AA 302 391 233">
+            <label>Pasport ma'lumotlari (Majburiy)</label>
+            <div class="pasport-row">
+                <input type="text"
+                       id="pasportHarf"
+                       class="pasport-letters"
+                       maxlength="2"
+                       placeholder="AA"
+                       inputmode="text"
+                       autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="characters">
+                <input type="tel"
+                       id="pasportRaqam"
+                       class="pasport-numbers"
+                       maxlength="11"
+                       placeholder="302 391 233"
+                       inputmode="numeric"
+                       autocomplete="off">
+            </div>
         </div>
 
         <div class="form-group">
             <label for="manzil">Manzili</label>
-            <input type="text" id="manzil" placeholder="Masalan: Toshkent sh., Chilonzor">
+            <input type="text" id="manzil" placeholder="Masalan: Toshkent sh., Chilonzor" inputmode="text">
         </div>
 
         <div class="form-group">
             <label>Rasm</label>
-            <div class="file-upload" id="photoUploadContainer">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                    <polyline points="21 15 16 10 5 21"></polyline>
+            <div class="file-upload">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
                 </svg>
                 <p id="uploadText">Rasm yuklash yoki suratga olish</p>
                 <input type="file" id="phonePhotoInput" accept="image/*">
@@ -312,106 +284,115 @@
         <button class="btn-submit" id="btnSubmit">Hujjatni 1C ga yuborish</button>
     </div>
 
-    <!-- Spinner Loading Overlay -->
     <div class="overlay" id="loadingOverlay">
         <div class="spinner"></div>
-        <p id="overlayMessage">Kuting, ma'lumotlar qayta ishlanmoqda...</p>
+        <p id="overlayMessage">Kuting...</p>
     </div>
 
     <script>
-        // Telegram WebApp initializations
         const tg = window.Telegram.WebApp;
         tg.ready();
         tg.expand();
 
-        // DOM elements
-        const modelInput = document.getElementById('model');
-        const imeiInput = document.getElementById('imei');
-        const imei2Input = document.getElementById('imei2');
-        const egasiInput = document.getElementById('egasi');
-        const pasportInput = document.getElementById('pasport');
-        const manzilInput = document.getElementById('manzil');
-        
-        const btnOcr = document.getElementById('btnOcr');
-        const imeiFileInput = document.getElementById('imeiFileInput');
-        
+        const modelInput      = document.getElementById('model');
+        const imeiInput       = document.getElementById('imei');
+        const imei2Input      = document.getElementById('imei2');
+        const egasiInput      = document.getElementById('egasi');
+        const pasportHarf     = document.getElementById('pasportHarf');
+        const pasportRaqam    = document.getElementById('pasportRaqam');
+        const manzilInput     = document.getElementById('manzil');
+        const btnOcr          = document.getElementById('btnOcr');
+        const imeiFileInput   = document.getElementById('imeiFileInput');
         const phonePhotoInput = document.getElementById('phonePhotoInput');
-        const photoPreview = document.getElementById('photoPreview');
-        const uploadText = document.getElementById('uploadText');
-        const btnSubmit = document.getElementById('btnSubmit');
-        const loadingOverlay = document.getElementById('loadingOverlay');
-        const overlayMessage = document.getElementById('overlayMessage');
+        const photoPreview    = document.getElementById('photoPreview');
+        const uploadText      = document.getElementById('uploadText');
+        const btnSubmit       = document.getElementById('btnSubmit');
+        const loadingOverlay  = document.getElementById('loadingOverlay');
+        const overlayMessage  = document.getElementById('overlayMessage');
+        const ocrStatus       = document.getElementById('ocrStatus');
 
         let phonePhotoBase64 = "";
 
-        // Trigger hidden input for OCR
+        // ── Pasport harflar: faqat lotin harflari, katta harf ──
+        pasportHarf.addEventListener('input', () => {
+            pasportHarf.value = pasportHarf.value.replace(/[^A-Za-z]/g, '').toUpperCase();
+            // Harflar to'lsa, raqam maydoniga o'tish
+            if (pasportHarf.value.length === 2) pasportRaqam.focus();
+        });
+
+        // ── Pasport raqamlar: faqat raqamlar, avtomatik bo'sh joy (XXX XXX XXX) ──
+        pasportRaqam.addEventListener('input', () => {
+            // Faqat raqamlar
+            let digits = pasportRaqam.value.replace(/\D/g, '');
+            // Max 9 ta raqam
+            if (digits.length > 9) digits = digits.slice(0, 9);
+            // Guruhlash: 3-3-3
+            let formatted = '';
+            if (digits.length <= 3) {
+                formatted = digits;
+            } else if (digits.length <= 6) {
+                formatted = digits.slice(0, 3) + ' ' + digits.slice(3);
+            } else {
+                formatted = digits.slice(0, 3) + ' ' + digits.slice(3, 6) + ' ' + digits.slice(6);
+            }
+            pasportRaqam.value = formatted;
+        });
+
+        // ── OCR skanerlash ──
         btnOcr.addEventListener('click', () => imeiFileInput.click());
 
-        // Process OCR on Single Photo
         imeiFileInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
             showOverlay("IMEI kodlari rasmdan aniqlanmoqda...");
-            try {
-                const result = await Tesseract.recognize(
-                    file,
-                    'eng',
-                    { logger: m => console.log(m) }
-                );
-                
-                const text = result.data.text;
-                console.log("OCR Result Text:", text);
+            ocrStatus.textContent = "";
 
-                // Find all sequences of exactly 15 digits
-                const cleanedText = text.replace(/[\s-]/g, ' ');
-                const rawMatches = cleanedText.match(/\b\d{15}\b/g) || [];
-                
-                // Filter to unique values to avoid writing the same IMEI to both fields
-                const imeiMatches = rawMatches.filter((item, index) => rawMatches.indexOf(item) === index);
-                
-                if (imeiMatches.length > 0) {
-                    imeiInput.value = imeiMatches[0];
-                    if (imeiMatches.length > 1) {
-                        imei2Input.value = imeiMatches[1];
-                        tg.showAlert("2 ta IMEI kod muvaffaqiyatli aniqlandi:\n1-IMEI: " + imeiMatches[0] + "\n2-IMEI: " + imeiMatches[1]);
+            try {
+                const result = await Tesseract.recognize(file, 'eng', { logger: () => {} });
+                const text = result.data.text;
+
+                // Unique IMEI matches (15-digit sequences)
+                const cleaned = text.replace(/[\s-]/g, ' ');
+                const rawMatches = cleaned.match(/\b\d{15}\b/g) || [];
+                const uniqueMatches = [...new Set(rawMatches)];
+
+                if (uniqueMatches.length > 0) {
+                    imeiInput.value = uniqueMatches[0];
+                    if (uniqueMatches.length > 1) {
+                        imei2Input.value = uniqueMatches[1];
+                        ocrStatus.textContent = "✓ 2 ta IMEI aniqlandi";
                     } else {
                         imei2Input.value = "";
-                        tg.showAlert("1 ta IMEI kod aniqlandi: " + imeiMatches[0]);
+                        ocrStatus.textContent = "✓ 1 ta IMEI aniqlandi";
                     }
                 } else {
-                    // Fallback to checking all contiguous digits
+                    // Fallback: contiguous digits
                     const digits = text.replace(/\D/g, '');
-                    const rawFallback = digits.match(/\d{15}/g) || [];
-                    const fallbackMatches = rawFallback.filter((item, index) => rawFallback.indexOf(item) === index);
-                    
-                    if (fallbackMatches.length > 0) {
-                        imeiInput.value = fallbackMatches[0];
-                        if (fallbackMatches.length > 1) {
-                            imei2Input.value = fallbackMatches[1];
-                            tg.showAlert("2 ta IMEI kod topildi:\n1-IMEI: " + fallbackMatches[0] + "\n2-IMEI: " + fallbackMatches[1]);
-                        } else {
-                            imei2Input.value = "";
-                            tg.showAlert("1 ta IMEI kod topildi: " + fallbackMatches[0]);
-                        }
+                    const raw2 = digits.match(/\d{15}/g) || [];
+                    const unique2 = [...new Set(raw2)];
+                    if (unique2.length > 0) {
+                        imeiInput.value = unique2[0];
+                        imei2Input.value = unique2.length > 1 ? unique2[1] : "";
+                        ocrStatus.textContent = unique2.length > 1 ? "✓ 2 ta IMEI aniqlandi" : "✓ 1 ta IMEI aniqlandi";
                     } else {
-                        tg.showAlert("IMEI kodlari rasmdan aniqlanmadi. Iltimos, qo'lda kiriting.");
+                        ocrStatus.style.color = '#f85149';
+                        ocrStatus.textContent = "✗ IMEI aniqlanmadi – qo'lda kiriting";
                     }
                 }
-            } catch (error) {
-                console.error("OCR Error:", error);
-                tg.showAlert("Skanerlashda xato yuz berdi: " + error.message);
+            } catch (err) {
+                ocrStatus.style.color = '#f85149';
+                ocrStatus.textContent = "✗ Skanerlashda xato: " + err.message;
             } finally {
                 hideOverlay();
                 imeiFileInput.value = "";
             }
         });
 
-        // Photo upload preview
+        // ── Rasm yuklash ──
         phonePhotoInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = (e) => {
                 phonePhotoBase64 = e.target.result;
@@ -422,89 +403,67 @@
             reader.readAsDataURL(file);
         });
 
-        // Submit to 1C
+        // ── Yuborish ──
         btnSubmit.addEventListener('click', async () => {
-            const model = modelInput.value.trim();
-            const imei = imeiInput.value.trim();
-            const imei2 = imei2Input.value.trim();
-            const egasi = egasiInput.value.trim();
-            const pasport = pasportInput.value.trim();
+            const model  = modelInput.value.trim();
+            const imei   = imeiInput.value.trim();
+            const imei2  = imei2Input.value.trim();
+            const egasi  = egasiInput.value.trim();
+            const harf   = pasportHarf.value.trim();
+            const raqam  = pasportRaqam.value.trim();
+            const pasport = harf + ' ' + raqam;
             const manzil = manzilInput.value.trim();
 
-            if (!model || !imei || !egasi || !manzil || !pasport) {
-                tg.showAlert("Iltimos, barcha majburiy maydonlarni (Model, IMEI 1, Egasi, Pasport, Manzil) to'ldiring!");
-                return;
-            }
-
-            if (imei.length !== 15 || isNaN(imei)) {
-                tg.showAlert("1-IMEI kodi roppa-rosa 15 ta raqam bo'lishi shart!");
-                return;
-            }
-
-            if (imei2 && (imei2.length !== 15 || isNaN(imei2))) {
-                tg.showAlert("2-IMEI kodi kiritilgan bo'lsa, roppa-rosa 15 ta raqam bo'lishi shart!");
-                return;
-            }
+            // Validation
+            if (!model)  return tg.showAlert("Telefon modelini kiriting!");
+            if (!imei)   return tg.showAlert("IMEI 1 ni kiriting!");
+            if (imei.length !== 15 || isNaN(imei)) return tg.showAlert("1-IMEI kodi roppa-rosa 15 ta raqam bo'lishi shart!");
+            if (imei2 && (imei2.length !== 15 || isNaN(imei2))) return tg.showAlert("2-IMEI kodi 15 ta raqam bo'lishi shart!");
+            if (!egasi)  return tg.showAlert("Telefon egasining ismini kiriting!");
+            if (harf.length !== 2) return tg.showAlert("Pasport seriyasini kiriting (masalan: AA)!");
+            if (raqam.replace(/\s/g,'').length < 7) return tg.showAlert("Pasport raqamini to'liq kiriting (masalan: 302 391 233)!");
+            if (!manzil) return tg.showAlert("Manzilni kiriting!");
 
             showOverlay("Ma'lumotlar 1C ga yuborilmoqda...");
 
-            const payload = {
-                model: model,
-                imei: imei,
-                imei2: imei2,
-                egasi: egasi,
-                pasport: pasport,
-                manzil: manzil,
-                photo: phonePhotoBase64
-            };
+            const payload = { model, imei, imei2, egasi, pasport, manzil, photo: phonePhotoBase64 };
 
             const urlParams = new URLSearchParams(window.location.search);
             let apiUrl = urlParams.get('api_url');
             if (!apiUrl) {
                 if (window.location.hostname.includes("github.io")) {
-                    tg.showAlert("Xato: 'api_url' parametri topilmadi!");
                     hideOverlay();
-                    return;
+                    return tg.showAlert("Xato: 'api_url' parametri topilmadi!");
                 }
-                const currentPath = window.location.pathname;
-                apiUrl = currentPath.substring(0, currentPath.lastIndexOf('/'));
+                const p = window.location.pathname;
+                apiUrl = p.substring(0, p.lastIndexOf('/'));
             }
-            
-            const url = apiUrl + "/hs/mobileapi/save_phone";
 
             try {
-                const response = await fetch(url, {
+                const response = await fetch(apiUrl + "/hs/mobileapi/save_phone", {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-
                 if (response.ok) {
                     const result = await response.json();
-                    tg.showAlert("Hujjat 1C da muvaffaqiyatli yaratildi!\nHujjat raqami: " + result.number);
-                    setTimeout(() => {
-                        tg.close();
-                    }, 1500);
+                    tg.showAlert("Hujjat yaratildi! Raqami: " + result.number);
+                    setTimeout(() => tg.close(), 1500);
                 } else {
-                    const errorText = await response.text();
-                    tg.showAlert("1C ga yuborishda xato: " + errorText);
+                    tg.showAlert("1C xato: " + await response.text());
                 }
             } catch (error) {
-                console.error("Fetch error:", error);
-                tg.showAlert("Tarmoq ulanish xatosi (IIS yoki Ngrok/Tailscale ishlayotganini tekshiring): " + error.message);
+                tg.showAlert("Tarmoq xatosi: " + error.message);
             } finally {
                 hideOverlay();
             }
         });
 
-        function showOverlay(message) {
-            overlayMessage.textContent = message;
+        function showOverlay(msg) {
+            overlayMessage.textContent = msg;
             loadingOverlay.classList.add('active');
             btnSubmit.disabled = true;
         }
-
         function hideOverlay() {
             loadingOverlay.classList.remove('active');
             btnSubmit.disabled = false;
