@@ -742,11 +742,7 @@
 
             const manzil = manzilInput.value.trim();
 
-            // Calculate and alert size
-            if (phonePhotoBase64) {
-                const sizeInKb = Math.round((phonePhotoBase64.length * 3) / 4 / 1024);
-                tg.showAlert("Yuborilayotgan rasm o'lchami: " + sizeInKb + " KB");
-            }
+
             if (!model) return tg.showAlert("Telefon modelini kiriting!");
 
             if (!imei) return tg.showAlert("IMEI 1 ni kiriting!");
