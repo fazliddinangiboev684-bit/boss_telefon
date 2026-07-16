@@ -93,33 +93,48 @@
             box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
         }
 
-        .imei-wrapper {
-            display: flex;
-            gap: 8px;
+        .imei-section {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.01);
         }
 
-        .btn-ocr {
+        .imei-section-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-ocr-main {
             background-color: var(--primary-color);
             border: none;
             color: #ffffff;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 6px;
             transition: background-color 0.2s;
-            flex-shrink: 0;
-            width: 48px;
         }
 
-        .btn-ocr:hover {
+        .btn-ocr-main:hover {
             background-color: #1f6feb;
         }
 
-        .btn-ocr svg {
-            width: 20px;
-            height: 20px;
+        .btn-ocr-main svg {
+            width: 14px;
+            height: 14px;
             fill: none;
             stroke: currentColor;
             stroke-width: 2;
@@ -239,32 +254,30 @@
             <input type="text" id="model" placeholder="Masalan: Samsung Galaxy A51">
         </div>
 
-        <div class="form-group">
-            <label for="imei">IMEI 1 (15 ta raqam)</label>
-            <div class="imei-wrapper">
-                <input type="text" id="imei" maxlength="15" placeholder="1-IMEI kod (15 ta raqam)">
-                <button class="btn-ocr" id="btnOcr" title="1-IMEI rasmini skanerlash (OCR)">
+        <!-- IMEI Section with single OCR button -->
+        <div class="imei-section">
+            <div class="imei-section-title">
+                <span>IMEI Kodlari</span>
+                <button class="btn-ocr-main" id="btnOcr" type="button" title="IMEI-larni rasmdan aniqlash">
                     <svg viewBox="0 0 24 24" stroke="currentColor">
                         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
                         <circle cx="12" cy="13" r="4"></circle>
                     </svg>
+                    Skanerlash
                 </button>
             </div>
+            
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label for="imei" style="font-size: 11px; margin-bottom: 4px;">IMEI 1</label>
+                <input type="text" id="imei" maxlength="15" placeholder="1-IMEI (15 ta raqam)">
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 0;">
+                <label for="imei2" style="font-size: 11px; margin-bottom: 4px;">IMEI 2 (Ixtiyoriy)</label>
+                <input type="text" id="imei2" maxlength="15" placeholder="2-IMEI (15 ta raqam)">
+            </div>
+            
             <input type="file" id="imeiFileInput" accept="image/*" style="display: none;">
-        </div>
-
-        <div class="form-group">
-            <label for="imei2">IMEI 2 (Ixtiyoriy)</label>
-            <div class="imei-wrapper">
-                <input type="text" id="imei2" maxlength="15" placeholder="2-IMEI kod (15 ta raqam)">
-                <button class="btn-ocr" id="btnOcr2" title="2-IMEI rasmini skanerlash (OCR)">
-                    <svg viewBox="0 0 24 24" stroke="currentColor">
-                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                        <circle cx="12" cy="13" r="4"></circle>
-                    </svg>
-                </button>
-            </div>
-            <input type="file" id="imeiFileInput2" accept="image/*" style="display: none;">
         </div>
 
         <div class="form-group">
@@ -322,9 +335,6 @@
         const btnOcr = document.getElementById('btnOcr');
         const imeiFileInput = document.getElementById('imeiFileInput');
         
-        const btnOcr2 = document.getElementById('btnOcr2');
-        const imeiFileInput2 = document.getElementById('imeiFileInput2');
-        
         const phonePhotoInput = document.getElementById('phonePhotoInput');
         const photoPreview = document.getElementById('photoPreview');
         const uploadText = document.getElementById('uploadText');
@@ -334,13 +344,15 @@
 
         let phonePhotoBase64 = "";
 
-        // Trigger hidden inputs for OCR
+        // Trigger hidden input for OCR
         btnOcr.addEventListener('click', () => imeiFileInput.click());
-        btnOcr2.addEventListener('click', () => imeiFileInput2.click());
 
-        // Helper function to process OCR
-        async function runOcrOnFile(file, targetInput) {
-            showOverlay("IMEI kod rasmdan aniqlanmoqda...");
+        // Process OCR on Single Photo
+        imeiFileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            showOverlay("IMEI kodlari rasmdan aniqlanmoqda...");
             try {
                 const result = await Tesseract.recognize(
                     file,
@@ -351,20 +363,35 @@
                 const text = result.data.text;
                 console.log("OCR Result Text:", text);
 
-                // Find 15 digits sequence
-                const imeiMatch = text.replace(/[\s-]/g, '').match(/\b\d{15}\b/);
+                // Find all sequences of exactly 15 digits
+                // Strip spaces and dashes temporarily for better matching
+                const cleanedText = text.replace(/[\s-]/g, ' ');
+                const imeiMatches = cleanedText.match(/\b\d{15}\b/g) || [];
                 
-                if (imeiMatch && imeiMatch[0]) {
-                    targetInput.value = imeiMatch[0];
-                    tg.showAlert("IMEI kod muvaffaqiyatli aniqlandi: " + imeiMatch[0]);
-                } else {
-                    const digits = text.replace(/\D/g, '');
-                    const fallbackMatch = digits.match(/\d{15}/);
-                    if (fallbackMatch && fallbackMatch[0]) {
-                        targetInput.value = fallbackMatch[0];
-                        tg.showAlert("IMEI kod topildi: " + fallbackMatch[0]);
+                if (imeiMatches.length > 0) {
+                    imeiInput.value = imeiMatches[0];
+                    if (imeiMatches.length > 1) {
+                        imei2Input.value = imeiMatches[1];
+                        tg.showAlert("2 ta IMEI kod muvaffaqiyatli aniqlandi:\n1-IMEI: " + imeiMatches[0] + "\n2-IMEI: " + imeiMatches[1]);
                     } else {
-                        tg.showAlert("IMEI код расмдан аниқланмади. Илтимос, қўлда киритинг.");
+                        imei2Input.value = "";
+                        tg.showAlert("1 ta IMEI kod aniqlandi: " + imeiMatches[0]);
+                    }
+                } else {
+                    // Fallback to checking all contiguous digits
+                    const digits = text.replace(/\D/g, '');
+                    const fallbackMatches = digits.match(/\d{15}/g) || [];
+                    if (fallbackMatches.length > 0) {
+                        imeiInput.value = fallbackMatches[0];
+                        if (fallbackMatches.length > 1) {
+                            imei2Input.value = fallbackMatches[1];
+                            tg.showAlert("2 ta IMEI kod topildi:\n1-IMEI: " + fallbackMatches[0] + "\n2-IMEI: " + fallbackMatches[1]);
+                        } else {
+                            imei2Input.value = "";
+                            tg.showAlert("1 ta IMEI kod topildi: " + fallbackMatches[0]);
+                        }
+                    } else {
+                        tg.showAlert("IMEI кодлари расмдан аниқланмади. Илтимос, қўлда киритинг.");
                     }
                 }
             } catch (error) {
@@ -372,20 +399,8 @@
                 tg.showAlert("Skanerlashda xato yuz berdi: " + error.message);
             } finally {
                 hideOverlay();
+                imeiFileInput.value = "";
             }
-        }
-
-        // Connect OCR file inputs
-        imeiFileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) runOcrOnFile(file, imeiInput);
-            imeiFileInput.value = "";
-        });
-
-        imeiFileInput2.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) runOcrOnFile(file, imei2Input);
-            imeiFileInput2.value = "";
         });
 
         // Photo upload preview
