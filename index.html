@@ -364,9 +364,11 @@
                 console.log("OCR Result Text:", text);
 
                 // Find all sequences of exactly 15 digits
-                // Strip spaces and dashes temporarily for better matching
                 const cleanedText = text.replace(/[\s-]/g, ' ');
-                const imeiMatches = cleanedText.match(/\b\d{15}\b/g) || [];
+                const rawMatches = cleanedText.match(/\b\d{15}\b/g) || [];
+                
+                // Filter to unique values to avoid writing the same IMEI to both fields
+                const imeiMatches = rawMatches.filter((item, index) => rawMatches.indexOf(item) === index);
                 
                 if (imeiMatches.length > 0) {
                     imeiInput.value = imeiMatches[0];
@@ -380,7 +382,9 @@
                 } else {
                     // Fallback to checking all contiguous digits
                     const digits = text.replace(/\D/g, '');
-                    const fallbackMatches = digits.match(/\d{15}/g) || [];
+                    const rawFallback = digits.match(/\d{15}/g) || [];
+                    const fallbackMatches = rawFallback.filter((item, index) => rawFallback.indexOf(item) === index);
+                    
                     if (fallbackMatches.length > 0) {
                         imeiInput.value = fallbackMatches[0];
                         if (fallbackMatches.length > 1) {
@@ -391,7 +395,7 @@
                             tg.showAlert("1 ta IMEI kod topildi: " + fallbackMatches[0]);
                         }
                     } else {
-                        tg.showAlert("IMEI кодлари расмдан аниқланмади. Илтимос, қўлда киритинг.");
+                        tg.showAlert("IMEI kodlari rasmdan aniqlanmadi. Iltimos, qo'lda kiriting.");
                     }
                 }
             } catch (error) {
@@ -438,7 +442,7 @@
             }
 
             if (imei2 && (imei2.length !== 15 || isNaN(imei2))) {
-                tg.showAlert("2-IMEI kodi kiritilgan бўлса, роппа-роса 15 та рақам бўлиши шарт!");
+                tg.showAlert("2-IMEI kodi kiritilgan bo'lsa, roppa-rosa 15 ta raqam bo'lishi shart!");
                 return;
             }
 
