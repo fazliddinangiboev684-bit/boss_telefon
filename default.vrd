@@ -8,7 +8,12 @@
 			protocol="http"
 			url="http://10.220.84.103:8000"/>
 	<ws enable="false"/>
-	<httpServices publishByDefault="true">
+	<standardOdata enable="true"
+			reuseSessions="autouse"
+			sessionMaxAge="20"
+			poolSize="10"
+			poolTimeout="5"/>
+	<httpServices>
 		<service name="МобильныйAPI"
 				rootUrl="mobileapi"
 				enable="true"
@@ -24,9 +29,4 @@
 				poolSize="10"
 				poolTimeout="5"/>
 	</httpServices>
-	<standardOdata enable="true"
-			reuseSessions="autouse"
-			sessionMaxAge="20"
-			poolSize="10"
-			poolTimeout="5"/>
 </point>

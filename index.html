@@ -232,7 +232,7 @@
             </div>
 
             <div class="ocr-status" id="ocrStatus"></div>
-            <input type="file" id="imeiFileInput" accept="image/*" style="display:none">
+            <input type="file" id="imeiFileInput" accept="image/*" capture="environment" style="display:none">
         </div>
 
         <div class="form-group">
@@ -257,7 +257,7 @@
                        id="pasportRaqam"
                        class="pasport-numbers"
                        maxlength="11"
-                       placeholder="302 391 233"
+                       placeholder="123 456 789"
                        inputmode="numeric"
                        autocomplete="off">
             </div>
@@ -421,7 +421,7 @@
             if (imei2 && (imei2.length !== 15 || isNaN(imei2))) return tg.showAlert("2-IMEI kodi 15 ta raqam bo'lishi shart!");
             if (!egasi)  return tg.showAlert("Telefon egasining ismini kiriting!");
             if (harf.length !== 2) return tg.showAlert("Pasport seriyasini kiriting (masalan: AA)!");
-            if (raqam.replace(/\s/g,'').length < 7) return tg.showAlert("Pasport raqamini to'liq kiriting (masalan: 302 391 233)!");
+            if (raqam.replace(/\s/g,'').length < 7) return tg.showAlert("Pasport raqamini to'liq kiriting (masalan: 123 456 789)!");
             if (!manzil) return tg.showAlert("Manzilni kiriting!");
 
             showOverlay("Ma'lumotlar 1C ga yuborilmoqda...");
