@@ -273,6 +273,11 @@
         </div>
 
         <div class="form-group">
+            <label for="pasport">Pasport ma'lumotlari</label>
+            <input type="text" id="pasport" placeholder="Masalan: AA 1234567">
+        </div>
+
+        <div class="form-group">
             <label for="manzil">Manzili</label>
             <input type="text" id="manzil" placeholder="Masalan: Toshkent sh., Chilonzor">
         </div>
@@ -311,6 +316,7 @@
         const imeiInput = document.getElementById('imei');
         const imei2Input = document.getElementById('imei2');
         const egasiInput = document.getElementById('egasi');
+        const pasportInput = document.getElementById('pasport');
         const manzilInput = document.getElementById('manzil');
         
         const btnOcr = document.getElementById('btnOcr');
@@ -403,10 +409,11 @@
             const imei = imeiInput.value.trim();
             const imei2 = imei2Input.value.trim();
             const egasi = egasiInput.value.trim();
+            const pasport = pasportInput.value.trim();
             const manzil = manzilInput.value.trim();
 
-            if (!model || !imei || !egasi || !manzil) {
-                tg.showAlert("Iltimos, barcha majburiy maydonlarni (Model, IMEI 1, Egasi, Manzil) to'ldiring!");
+            if (!model || !imei || !egasi || !manzil || !pasport) {
+                tg.showAlert("Iltimos, barcha majburiy maydonlarni (Model, IMEI 1, Egasi, Pasport, Manzil) to'ldiring!");
                 return;
             }
 
@@ -427,6 +434,7 @@
                 imei: imei,
                 imei2: imei2,
                 egasi: egasi,
+                pasport: pasport,
                 manzil: manzil,
                 photo: phonePhotoBase64
             };
