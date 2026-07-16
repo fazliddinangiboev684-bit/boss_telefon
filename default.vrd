@@ -8,9 +8,16 @@
 			protocol="http"
 			url="http://10.220.84.103:8000"/>
 	<ws enable="false"/>
-	<httpServices publishByDefault="false">
+	<httpServices publishByDefault="true">
 		<service name="МобильныйAPI"
 				rootUrl="mobileapi"
+				enable="true"
+				reuseSessions="autouse"
+				sessionMaxAge="20"
+				poolSize="10"
+				poolTimeout="5"/>
+		<service name="ТелеграмВебхук"
+				rootUrl="tgwebhook"
 				enable="true"
 				reuseSessions="autouse"
 				sessionMaxAge="20"
