@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Telefon do'koni - Eski Telefon Topshirish</title>
+    <title>Eski Telefon Topshirish - Mini App</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Telegram WebApp SDK -->
@@ -227,32 +227,6 @@
             font-weight: 500;
             color: #ffffff;
         }
-
-        .scanning-bar {
-            width: 100%;
-            height: 4px;
-            background-color: var(--primary-color);
-            position: absolute;
-            top: 0;
-            animation: scan 2s ease-in-out infinite;
-            box-shadow: 0 0 10px var(--primary-color);
-            display: none;
-        }
-
-        .file-upload.scanning .scanning-bar {
-            display: block;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes scan {
-            0% { top: 0%; }
-            50% { top: 100%; }
-            100% { top: 0%; }
-        }
     </style>
 </head>
 <body>
@@ -266,35 +240,52 @@
         </div>
 
         <div class="form-group">
-            <label for="imei">IMEI kod (15 ta raqam)</label>
+            <label for="imei">IMEI 1 (15 ta raqam)</label>
             <div class="imei-wrapper">
-                <input type="text" id="imei" maxlength="15" placeholder="15 xonali raqam">
-                <button class="btn-ocr" id="btnOcr" title="IMEI rasmini skanerlash (OCR)">
+                <input type="text" id="imei" maxlength="15" placeholder="1-IMEI kod (15 ta raqam)">
+                <button class="btn-ocr" id="btnOcr" title="1-IMEI rasmini skanerlash (OCR)">
                     <svg viewBox="0 0 24 24" stroke="currentColor">
                         <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
                         <circle cx="12" cy="13" r="4"></circle>
                     </svg>
                 </button>
             </div>
-            <!-- Hidden inputs for IMEI Image Scan -->
             <input type="file" id="imeiFileInput" accept="image/*" style="display: none;">
         </div>
 
         <div class="form-group">
-            <label for="sotuvchi">Sotuvchi (Ism va manzil)</label>
-            <input type="text" id="sotuvchi" placeholder="Masalan: Sherzod, Toshkent">
+            <label for="imei2">IMEI 2 (Ixtiyoriy)</label>
+            <div class="imei-wrapper">
+                <input type="text" id="imei2" maxlength="15" placeholder="2-IMEI kod (15 ta raqam)">
+                <button class="btn-ocr" id="btnOcr2" title="2-IMEI rasmini skanerlash (OCR)">
+                    <svg viewBox="0 0 24 24" stroke="currentColor">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                </button>
+            </div>
+            <input type="file" id="imeiFileInput2" accept="image/*" style="display: none;">
         </div>
 
         <div class="form-group">
-            <label>Telefon surati</label>
+            <label for="egasi">Telefon egasi (F.I.SH.)</label>
+            <input type="text" id="egasi" placeholder="Masalan: Sherzod Toshpo'latov">
+        </div>
+
+        <div class="form-group">
+            <label for="manzil">Manzili</label>
+            <input type="text" id="manzil" placeholder="Masalan: Toshkent sh., Chilonzor">
+        </div>
+
+        <div class="form-group">
+            <label>Rasm</label>
             <div class="file-upload" id="photoUploadContainer">
-                <div class="scanning-bar"></div>
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8b949e" stroke-width="2">
                     <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                     <circle cx="8.5" cy="8.5" r="1.5"></circle>
                     <polyline points="21 15 16 10 5 21"></polyline>
                 </svg>
-                <p id="uploadText">Telefon rasmini yuklang yoki rasmга oling</p>
+                <p id="uploadText">Rasm yuklash yoki suratga olish</p>
                 <input type="file" id="phonePhotoInput" accept="image/*">
             </div>
             <img id="photoPreview" class="image-preview" src="#" alt="Telefon rasmi">
@@ -318,33 +309,33 @@
         // DOM elements
         const modelInput = document.getElementById('model');
         const imeiInput = document.getElementById('imei');
-        const sotuvchiInput = document.getElementById('sotuvchi');
+        const imei2Input = document.getElementById('imei2');
+        const egasiInput = document.getElementById('egasi');
+        const manzilInput = document.getElementById('manzil');
+        
         const btnOcr = document.getElementById('btnOcr');
         const imeiFileInput = document.getElementById('imeiFileInput');
+        
+        const btnOcr2 = document.getElementById('btnOcr2');
+        const imeiFileInput2 = document.getElementById('imeiFileInput2');
+        
         const phonePhotoInput = document.getElementById('phonePhotoInput');
         const photoPreview = document.getElementById('photoPreview');
         const uploadText = document.getElementById('uploadText');
         const btnSubmit = document.getElementById('btnSubmit');
         const loadingOverlay = document.getElementById('loadingOverlay');
         const overlayMessage = document.getElementById('overlayMessage');
-        const photoUploadContainer = document.getElementById('photoUploadContainer');
 
         let phonePhotoBase64 = "";
 
-        // Trigger hidden input for IMEI OCR
-        btnOcr.addEventListener('click', () => {
-            imeiFileInput.click();
-        });
+        // Trigger hidden inputs for OCR
+        btnOcr.addEventListener('click', () => imeiFileInput.click());
+        btnOcr2.addEventListener('click', () => imeiFileInput2.click());
 
-        // IMEI OCR Processing
-        imeiFileInput.addEventListener('change', async (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
-
+        // Helper function to process OCR
+        async function runOcrOnFile(file, targetInput) {
             showOverlay("IMEI kod rasmdan aniqlanmoqda...");
-            
             try {
-                // Run OCR with Tesseract.js
                 const result = await Tesseract.recognize(
                     file,
                     'eng',
@@ -354,21 +345,20 @@
                 const text = result.data.text;
                 console.log("OCR Result Text:", text);
 
-                // Regex search for exactly 15 digits
+                // Find 15 digits sequence
                 const imeiMatch = text.replace(/[\s-]/g, '').match(/\b\d{15}\b/);
                 
                 if (imeiMatch && imeiMatch[0]) {
-                    imeiInput.value = imeiMatch[0];
+                    targetInput.value = imeiMatch[0];
                     tg.showAlert("IMEI kod muvaffaqiyatli aniqlandi: " + imeiMatch[0]);
                 } else {
-                    // Fallback to searching for any 15-digit sequence in raw digits
                     const digits = text.replace(/\D/g, '');
                     const fallbackMatch = digits.match(/\d{15}/);
                     if (fallbackMatch && fallbackMatch[0]) {
-                        imeiInput.value = fallbackMatch[0];
+                        targetInput.value = fallbackMatch[0];
                         tg.showAlert("IMEI kod topildi: " + fallbackMatch[0]);
                     } else {
-                        tg.showAlert("IMEI kod rasmdan aniqlanmadi. Iltimos, qo'lda kiriting yoki boshqa rasmini oling.");
+                        tg.showAlert("IMEI код расмдан аниқланмади. Илтимос, қўлда киритинг.");
                     }
                 }
             } catch (error) {
@@ -376,12 +366,23 @@
                 tg.showAlert("Skanerlashda xato yuz berdi: " + error.message);
             } finally {
                 hideOverlay();
-                // Clear file input
-                imeiFileInput.value = "";
             }
+        }
+
+        // Connect OCR file inputs
+        imeiFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) runOcrOnFile(file, imeiInput);
+            imeiFileInput.value = "";
         });
 
-        // Phone photo upload and preview
+        imeiFileInput2.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) runOcrOnFile(file, imei2Input);
+            imeiFileInput2.value = "";
+        });
+
+        // Photo upload preview
         phonePhotoInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (!file) return;
@@ -400,40 +401,46 @@
         btnSubmit.addEventListener('click', async () => {
             const model = modelInput.value.trim();
             const imei = imeiInput.value.trim();
-            const sotuvchi = sotuvchiInput.value.trim();
+            const imei2 = imei2Input.value.trim();
+            const egasi = egasiInput.value.trim();
+            const manzil = manzilInput.value.trim();
 
-            if (!model || !imei) {
-                tg.showAlert("Telefon modeli va IMEI kodi to'ldirilishi shart!");
+            if (!model || !imei || !egasi || !manzil) {
+                tg.showAlert("Iltimos, barcha majburiy maydonlarni (Model, IMEI 1, Egasi, Manzil) to'ldiring!");
                 return;
             }
 
             if (imei.length !== 15 || isNaN(imei)) {
-                tg.showAlert("IMEI kodi roppa-rosa 15 ta raqam bo'lishi shart!");
+                tg.showAlert("1-IMEI kodi roppa-rosa 15 ta raqam bo'lishi shart!");
+                return;
+            }
+
+            if (imei2 && (imei2.length !== 15 || isNaN(imei2))) {
+                tg.showAlert("2-IMEI kodi kiritilgan бўлса, роппа-роса 15 та рақам бўлиши шарт!");
                 return;
             }
 
             showOverlay("Ma'lumotlar 1C ga yuborilmoqda...");
 
-            // Construct payload
             const payload = {
                 model: model,
                 imei: imei,
-                sotuvchi: sotuvchi,
+                imei2: imei2,
+                egasi: egasi,
+                manzil: manzil,
                 photo: phonePhotoBase64
             };
 
-            // Dynamic API URL from URL query parameters (for GitHub Pages hosting)
             const urlParams = new URLSearchParams(window.location.search);
             let apiUrl = urlParams.get('api_url');
             if (!apiUrl) {
-                // If hosted on GitHub Pages but no api_url parameter was passed, show a clear warning
                 if (window.location.hostname.includes("github.io")) {
-                    tg.showAlert("Xato: 'api_url' parametri topilmadi!\n\nIltimos, 1С бошқарув ойнасидаги ҳавола охирига '?api_url=https://...' параметри тўғри ёзилганини ва бот қайта ишга туширилганини текширинг.");
+                    tg.showAlert("Xato: 'api_url' parametri topilmadi!");
                     hideOverlay();
                     return;
                 }
-                const currentPath = window.location.pathname; // "/bossBot/index.html"
-                apiUrl = currentPath.substring(0, currentPath.lastIndexOf('/')); // "/bossBot"
+                const currentPath = window.location.pathname;
+                apiUrl = currentPath.substring(0, currentPath.lastIndexOf('/'));
             }
             
             const url = apiUrl + "/hs/mobileapi/save_phone";
@@ -459,7 +466,7 @@
                 }
             } catch (error) {
                 console.error("Fetch error:", error);
-                tg.showAlert("Tarmoq ulanish xatosi (IIS ёки Ngrok ишлаётганини текширинг): " + error.message);
+                tg.showAlert("Tarmoq ulanish xatosi (IIS yoki Ngrok/Tailscale ishlayotganini tekshiring): " + error.message);
             } finally {
                 hideOverlay();
             }
